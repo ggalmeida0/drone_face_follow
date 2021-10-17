@@ -2,20 +2,18 @@ import numpy as np
 from yoloface.utils import IMG_WIDTH
 from simple_pid import PID
 
-TARGET_AREA = (30000,40000)
+TARGET_AREA = 35000
+ERROR_THRESH = 50
+TARGET_X = IMG_WIDTH // 2
 
 def follow_face(drone,box):
-    pid = PID(.4,0,.1)
+    centering_pid, distance_pid = PID(.1,.4,0), PID(.001,.4,0)
     x, _, width, height = box
     current_area = width * height
-    target_x = IMG_WIDTH // 2
-    error = target_x - x
-    if current_area < TARGET_AREA[0]: fb = 20
-    elif current_area > TARGET_AREA[1]: fb = -20
-    else: fb = 0
-    speed = pid(error)
-    speed = int(np.clip(speed,-100,100))
+    centering_error, distance_error = TARGET_X - x , current_area - TARGET_AREA
+    print("Current Distance Error: ",distance_error)
+    print("Current Centering Error: ",centering_error)
+    centering_speed, distancing_speed = centering_pid(centering_error), distance_pid(distance_error)
+    centering_speed, distancing_speed = int(np.clip(centering_speed,-100,100)), int(np.clip(distancing_speed,-100,100))
     print("current area: ",current_area)
-    drone.send_rc_control(0,fb,0,speed)
-    
-    return error
+    drone.send_rc_control(0,distancing_speed,0,centering_speed)

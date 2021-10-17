@@ -49,7 +49,7 @@ def flight(drone,detector):
                         elif state == DroneState.FOLLOW:
                                 if faces:
                                         owner_box = faces[0] # Here we can recognize the owner in the future
-                                        pid_error = follow_face(drone,owner_box)
+                                        follow_face(drone,owner_box)
                                 else:
                                         state = DroneState.FIND_FACE
         except Exception as e:
