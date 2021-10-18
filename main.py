@@ -2,7 +2,7 @@ from face_detection import FaceDetector
 import cv2
 from djitellopy import Tello
 from states import DroneState
-from pid import follow_face
+from pid import PidController
 from sys import argv
 import traceback
 from yoloface.utils import IMG_HEIGHT, IMG_WIDTH
@@ -38,6 +38,7 @@ def flight(drone,detector):
         drone.get_frame_read() #Start getting frames before takeoff
         drone.takeoff()
         state = DroneState.FIND_FACE
+        controller = PidController(enable_data_collection=True)
         try:
                 while True:
                         frame = drone.get_frame_read().frame
@@ -49,12 +50,13 @@ def flight(drone,detector):
                         elif state == DroneState.FOLLOW:
                                 if faces:
                                         owner_box = faces[0] # Here we can recognize the owner in the future
-                                        follow_face(drone,owner_box)
+                                        controller.follow_face(drone,owner_box)
                                 else:
                                         state = DroneState.FIND_FACE
         except Exception as e:
                 print(f"Threw Exception: {e}")
                 print("Full Traceback:\n",traceback.print_exc())
                 drone.land()
+                controller.stop()
 if __name__ == "__main__":
     main()
