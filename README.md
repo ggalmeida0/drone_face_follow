@@ -25,4 +25,4 @@ To land the drone after the program is running you can do a keyboard interrupt (
 The program is a implementation of the state machine below: 
 ![State Machine Diagram](img/state-machine.png)
 
-Every command to Tello is done with the [DJITelloPy](https://github.com/damiafuentes/DJITelloPy/) library. [Yoloface](https://github.com/sthanhng/yoloface) is used to find the the face. A PID controller is used to mantain the distance from the face, once it's found, the PID controller was tuned with [PID Tuner](https://pidtuner.com/#/) and Implemented with [simple-pid](https://github.com/m-lundberg/simple-pid).
+Every command to Tello is done with the [DJITelloPy](https://github.com/damiafuentes/DJITelloPy/) library. [Yoloface](https://github.com/sthanhng/yoloface) is used to find the the face. A PID controller is used to mantain the distance from the face. The PID controller was tuned with [PID Tuner](https://pidtuner.com/#/) and Implemented with [simple-pid](https://github.com/m-lundberg/simple-pid).
