@@ -7,10 +7,6 @@ from sys import argv
 import traceback
 from yoloface.utils import IMG_HEIGHT, IMG_WIDTH
 
-
-#Observations: 
-# Maybe try to run the video capturing in a another thread for better speedup
-
 def main():
         drone = Tello()
         drone.connect()
@@ -35,15 +31,24 @@ def just_video(drone,detector):
 
 
 def flight(drone,detector):
+        print("Current Battery: ",drone.get_battery(),"%")
         drone.get_frame_read() #Start getting frames before takeoff
         drone.takeoff()
-        state = DroneState.FIND_FACE
+        state = DroneState.LEVEL_HEIGHT
         controller = PidController(enable_data_collection=True)
+        TARGET_HEIGHT = 130
         try:
                 while True:
                         frame = drone.get_frame_read().frame
                         frame = cv2.resize(frame,(IMG_WIDTH,IMG_HEIGHT))
                         faces = detector.yolo_detect(frame)
+                        if state == DroneState.LEVEL_HEIGHT:
+                                current_height = drone.get_height()
+                                print("Current Height: ",current_height)
+                                if current_height > TARGET_HEIGHT: drone.send_rc_control(0,0,-10,0)
+                                elif current_height < TARGET_HEIGHT: drone.send_rc_control(0,0,10,0)
+                                else: state = DroneState.FIND_FACE
+
                         if state == DroneState.FIND_FACE:
                                 if len(faces) > 0: state = DroneState.FOLLOW
                                 else: drone.rotate_clockwise(30)
@@ -53,6 +58,7 @@ def flight(drone,detector):
                                         controller.follow_face(drone,owner_box)
                                 else:
                                         state = DroneState.FIND_FACE
+                        if drone.get_height() != TARGET_HEIGHT: state = DroneState.LEVEL_HEIGHT
         except Exception as e:
                 print(f"Threw Exception: {e}")
                 print("Full Traceback:\n",traceback.print_exc())

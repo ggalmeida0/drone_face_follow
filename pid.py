@@ -34,7 +34,7 @@ class PidController:
         current_area = width * height
         centering_error, distance_error = TARGET_X - x , current_area - TARGET_AREA
         centering_speed, distancing_speed = centering_pid(centering_error), distance_pid(distance_error)
-        centering_speed, distancing_speed = int(np.clip(centering_speed,-100,100)), int(np.clip(distancing_speed,-100,100))
+        centering_speed, distancing_speed = int(np.clip(centering_speed,-100,100)), -int(np.clip(distancing_speed,-100,100))
         if self.collect_data: self._write([centering_error,distance_error],[centering_speed,distancing_speed])
         drone.send_rc_control(0,distancing_speed,0,centering_speed)
 
