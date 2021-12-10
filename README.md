@@ -6,7 +6,7 @@ A program that will do 3 things:
 2) Rotate until it finds a human face.
 3) Once found it will try to stay a certain distance from the face, even if you move back and forth.
 
-## Instalations:
+## Installations:
 Notably it uses [DJITelloPy](https://github.com/damiafuentes/DJITelloPy/), [yoloface](https://github.com/sthanhng/yoloface) and [simple-pid](https://github.com/m-lundberg/simple-pid). To Install every dependency run:
 
 `pip install -r requirements.txt`
